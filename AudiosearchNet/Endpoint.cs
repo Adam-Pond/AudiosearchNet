@@ -20,5 +20,6 @@
 		/// This endpoint returns search results for trending Shows
 		/// </summary>
 		public const string TRENDING_SHOW = @"/chart_daily?limit=10&country=us";
+        public const string TRENDING_SHOW2 = @"/chart_daily?limit=10&country=us";
 	}
 }
