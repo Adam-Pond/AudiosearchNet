@@ -9,8 +9,8 @@ namespace AudiosearchNet.Models
 	public class Urls
 	{
 		[JsonProperty("self")]
-		public string self { get; set; }
+		public string Self { get; set; }
 		[JsonProperty("ui")]
-		public string ui { get; set; }
+		public string Ui { get; set; }
 	}
 }

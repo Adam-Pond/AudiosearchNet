@@ -47,14 +47,9 @@ namespace AudiosearchNet
 		/// <returns>Results for Shows.</returns>
 		public AudiosearchNetApiResult<Show> GetShowsByKeyWords(string keyWords)
 		{
-			string response = ReadResponse(keyWords);
+			string endpoint = string.Concat(Endpoint.SEARCH_SHOW_BY_QUERY, keyWords);
+			var response = GetApiResponse("Keywords_"+keyWords, endpoint);
 
-			if (string.IsNullOrEmpty(response))
-			{
-				response = this.GetJsonResponse(string.Concat(Endpoint.SEARCH_SHOW_BY_QUERY, keyWords));
-			}
-
-			WriteResponse(keyWords, response);
 			return JsonConvert.DeserializeObject<AudiosearchNetApiResult<Show>>(response);
 		}
 
@@ -65,23 +60,42 @@ namespace AudiosearchNet
 		/// <returns>Results for Shows.</returns>
 		public AudiosearchNetApiResult<Show> GetShowsByQuery(Query query)
 		{
-			var response = this.GetJsonResponse(string.Concat(Endpoint.SEARCH_SHOW_BY_QUERY, query.ToString()));
-
+			string endpoint = string.Concat(Endpoint.SEARCH_SHOW_BY_QUERY, query.ToString());
+			var response = GetApiResponse("Query_"+query.KeyWords, endpoint);
 			return JsonConvert.DeserializeObject<AudiosearchNetApiResult<Show>>(response);
 		}
 
-		public dynamic GetShowsById_Dynamic(int id)
+		public dynamic GetShowById_Dynamic(int id)
 		{
-			string response = ReadResponse(id.ToString());
+			string endpoint = string.Concat(Endpoint.SHOW_BY_ID, id);
+			var response = GetApiResponse(id.ToString(), endpoint);
+
+			dynamic result = JsonConvert.DeserializeObject<dynamic>(response);
+
+			return result;
+		}
+
+		public ShowById GetShowById(int id)
+		{
+			string endpoint = string.Concat(Endpoint.SHOW_BY_ID, id);
+			var response = GetApiResponse(id.ToString(), endpoint);
+
+			var result = JsonConvert.DeserializeObject<ShowById>(response);
+
+			return result;
+		}
+
+		private string GetApiResponse(string cacheId, string endpoint)
+		{
+			string response = ReadResponse(cacheId.ToString());
 
 			if (string.IsNullOrEmpty(response))
 			{
-				response = this.GetJsonResponse(string.Concat(Endpoint.SHOW_BY_ID, id));
+				response = this.GetJsonResponse(endpoint);
+				WriteResponse(cacheId, response);
 			}
 
-			dynamic results = JsonConvert.DeserializeObject<dynamic>(response);
-
-			return results;
+			return response;
 		}
 
 		#endregion
@@ -160,10 +174,9 @@ namespace AudiosearchNet
 		{
 			DirectoryInfo directoryInfo = GetTempCacheFileName();
 			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + from + ".json";
-			if (System.IO.File.Exists(directoryInfo.FullName))
+			if (System.IO.File.Exists(resultsFile))
 			{
-
-				var response = System.IO.File.ReadAllText(directoryInfo.FullName);
+				var response = System.IO.File.ReadAllText(resultsFile);
 				return response;
 			}
 

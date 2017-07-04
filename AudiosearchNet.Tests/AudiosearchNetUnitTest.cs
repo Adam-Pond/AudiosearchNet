@@ -37,7 +37,7 @@ namespace AudiosearchNet.Tests
 		[TestCategory("Integration"), TestMethod]
 		public void AudiosearchNetClient_DymamicResults()
 		{
-			dynamic dynamicShow = client.GetShowsById_Dynamic(613);
+			dynamic dynamicShow = client.GetShowById_Dynamic(613);
 
 			Assert.IsNotNull(dynamicShow.id);
 			Assert.IsNotNull(dynamicShow.title);

@@ -6,32 +6,32 @@ namespace AudiosearchNet.Models
  	public class ShowById
 	{
 		[JsonProperty("id")]
-		public int id { get; set; }
+		public int Id { get; set; }
 		[JsonProperty("title")]
-		public string title { get; set; }
+		public string Title { get; set; }
 		[JsonProperty("description")]
-		public string description { get; set; }
+		public string Description { get; set; }
 		[JsonProperty("network")]
-		public object network { get; set; }
+		public object Network { get; set; }
 		[JsonProperty("itunes_id")]
-		public int itunes_id { get; set; }
+		public int Itunes_id { get; set; }
 		[JsonProperty("categories")]
-		public List<string> categories { get; set; }
+		public List<string> Categories { get; set; }
 		[JsonProperty("buzz_score")]
-		public string buzz_score { get; set; }
+		public string Buzz_score { get; set; }
 		[JsonProperty("image_files")]
-		public List<ImageFile> image_files { get; set; }
+		public List<ImageFile> Image_files { get; set; }
 		[JsonProperty("number_of_episodes")]
-		public int number_of_episodes { get; set; }
+		public int Number_of_episodes { get; set; }
 		[JsonProperty("episode_ids")]
-		public List<int> episode_ids { get; set; }
+		public List<int> Episode_ids { get; set; }
 		[JsonProperty("urls")]
-		public Urls urls { get; set; }
+		public Urls Urls { get; set; }
 		[JsonProperty("rss_url")]
-		public string rss_url { get; set; }
+		public string Rss_url { get; set; }
 		[JsonProperty("sc_feed")]
-		public object sc_feed { get; set; }
+		public object Sc_feed { get; set; }
 		[JsonProperty("web_profiles")]
-		public object web_profiles { get; set; }
+		public object Web_profiles { get; set; }
 	}
 }

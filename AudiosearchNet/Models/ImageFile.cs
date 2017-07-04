@@ -9,6 +9,6 @@ namespace AudiosearchNet.Models
 	public class ImageFile
 	{
 		[JsonProperty("url")]
-		public Url url { get; set; }
+		public Url Url { get; set; }
 	}
 }
