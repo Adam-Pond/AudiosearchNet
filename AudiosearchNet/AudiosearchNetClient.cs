@@ -48,7 +48,7 @@ namespace AudiosearchNet
 		public AudiosearchNetApiResult<Show> GetShowsByKeyWords(string keyWords)
 		{
 			string endpoint = string.Concat(Endpoint.SEARCH_SHOW_BY_QUERY, keyWords);
-			var response = GetApiResponse("Keywords_"+keyWords, endpoint);
+			var response = GetApiResponse(endpoint);
 
 			return JsonConvert.DeserializeObject<AudiosearchNetApiResult<Show>>(response);
 		}
@@ -61,14 +61,14 @@ namespace AudiosearchNet
 		public AudiosearchNetApiResult<Show> GetShowsByQuery(Query query)
 		{
 			string endpoint = string.Concat(Endpoint.SEARCH_SHOW_BY_QUERY, query.ToString());
-			var response = GetApiResponse("Query_"+query.KeyWords, endpoint);
+			var response = GetApiResponse(endpoint);
 			return JsonConvert.DeserializeObject<AudiosearchNetApiResult<Show>>(response);
 		}
 
 		public dynamic GetShowById_Dynamic(int id)
 		{
 			string endpoint = string.Concat(Endpoint.SHOW_BY_ID, id);
-			var response = GetApiResponse(id.ToString(), endpoint);
+			var response = GetApiResponse(endpoint);
 
 			dynamic result = JsonConvert.DeserializeObject<dynamic>(response);
 
@@ -78,33 +78,20 @@ namespace AudiosearchNet
 		public ShowById GetShowById(int id)
 		{
 			string endpoint = string.Concat(Endpoint.SHOW_BY_ID, id);
-			var response = GetApiResponse(id.ToString(), endpoint);
+			var response = GetApiResponse(endpoint);
 
 			var result = JsonConvert.DeserializeObject<ShowById>(response);
 
 			return result;
 		}
-
-		private string GetApiResponse(string cacheId, string endpoint)
-		{
-			string response = ReadResponse(cacheId.ToString());
-
-			if (string.IsNullOrEmpty(response))
-			{
-				response = this.GetJsonResponse(endpoint);
-				WriteResponse(cacheId, response);
-			}
-
-			return response;
-		}
-
+		
 		#endregion
 
 		#region Categories
 
 		public dynamic GetCategoriesDynamic()
 		{
-			string response = CachedResponse("Categories");
+			string response = GetApiResponse(Endpoint.CATEGORIES);
 			dynamic results = JsonConvert.DeserializeObject<dynamic>(response);
 
 			return results;
@@ -112,24 +99,37 @@ namespace AudiosearchNet
 
 		public List<Category> GetCategories()
 		{
-			string response = CachedResponse("Categories");
+			string response = GetApiResponse(Endpoint.CATEGORIES);
 			var results = JsonConvert.DeserializeObject<List<Category>>(response);
 
 			return results;
+		}
+
+		public List<AudiosearchNet.Models.EpisodeById> GetEpisodes(List<int> episodeIds)
+		{
+			var episodes = new List<AudiosearchNet.Models.EpisodeById>();
+
+			foreach (var id in episodeIds)
+			{
+				string endpoint = string.Concat(Endpoint.EPISODES, id);
+				string response = GetApiResponse(endpoint);
+				episodes.Add(JsonConvert.DeserializeObject<EpisodeById>(response));
+			}
+			return episodes;
 		}
 
 		/// <summary>
 		/// Returns a cached response based on the given ID.
 		/// Cache is in %TEMP%/AudioSearch
 		/// </summary>
-		/// <param name="id">A unique identifier of the response</param>
 		/// <returns>Returns null if the cache file does not exist, else returns the contents of the response in the file identified by the id</returns>
-		private string CachedResponse(string id)
+		private string GetApiResponse(string endpoint)
 		{
-			string response = ReadResponse(id);
+			string response = ReadResponse(EndpointToFileNamePostfix(endpoint));
 			if (string.IsNullOrEmpty(response))
 			{
-				response = this.GetJsonResponse(Endpoint.CATEGORIES);
+				response = this.GetJsonResponse(endpoint);
+				WriteResponse(endpoint, response);
 			}
 
 			return response;
@@ -142,38 +142,21 @@ namespace AudiosearchNet
 		/// <summary>
 		/// Write a JSON response to a temp file so it can be interrogated later
 		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="response"></param>
 		/// <returns></returns>
-		private bool WriteResponse(int id, string response)
+		private bool WriteResponse(string endpoint, string response)
 		{
 			DirectoryInfo directoryInfo = GetTempCacheFileName();
-			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + id + ".json";
+			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + EndpointToFileNamePostfix(endpoint) + ".json";
 
 			WriteToFile(response, resultsFile);
 
 			return true;
 		}
 
-		/// <summary>
-		/// Write a JSON response to a temp file so it can be or used as a cache
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="response"></param>
-		/// <returns></returns>
-		private bool WriteResponse(string from, string response)
+		private string ReadResponse(string endpoint)
 		{
 			DirectoryInfo directoryInfo = GetTempCacheFileName();
-			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + from + ".json";
-			WriteToFile(response, resultsFile);
-
-			return true;
-		}
-
-		private string ReadResponse(string from)
-		{
-			DirectoryInfo directoryInfo = GetTempCacheFileName();
-			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + from + ".json";
+			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + EndpointToFileNamePostfix(endpoint) + ".json";
 			if (System.IO.File.Exists(resultsFile))
 			{
 				var response = System.IO.File.ReadAllText(resultsFile);
@@ -181,12 +164,6 @@ namespace AudiosearchNet
 			}
 
 			return null;
-		}
-
-		private static DirectoryInfo GetTempCacheFileName()
-		{
-			return Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
-			// Note: This is just temporary until the results are stored in the DB
 		}
 
 		private static void WriteToFile(string response, string filename)
@@ -198,6 +175,18 @@ namespace AudiosearchNet
 
 			System.IO.File.WriteAllText(filename, response);
 		}
+
+		private string EndpointToFileNamePostfix(string endpoint)
+		{
+			return endpoint.Replace('/', '_').Replace('\\', '_');
+		}
+
+		private static DirectoryInfo GetTempCacheFileName()
+		{
+			return Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
+			// Note: This is just temporary until the results are stored in the DB
+		}
+
 		#endregion
 	}
 }

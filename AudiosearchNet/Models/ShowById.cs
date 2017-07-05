@@ -16,7 +16,7 @@ namespace AudiosearchNet.Models
 		[JsonProperty("itunes_id")]
 		public int Itunes_id { get; set; }
 		[JsonProperty("categories")]
-		public List<string> Categories { get; set; }
+		public List<int> Categories { get; set; }
 		[JsonProperty("buzz_score")]
 		public string Buzz_score { get; set; }
 		[JsonProperty("image_files")]
