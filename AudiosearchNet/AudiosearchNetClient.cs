@@ -168,7 +168,7 @@ namespace AudiosearchNet
 		private string TempFilenameFromEndpoint(string endpoint)
 		{
 			var tempPath = Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
-			var path = tempPath + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_') + ".json";
+			var path = tempPath.FullName + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_') + ".json";
 
 			return path;
 		}
