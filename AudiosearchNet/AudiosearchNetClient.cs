@@ -84,7 +84,7 @@ namespace AudiosearchNet
 
 			return result;
 		}
-		
+
 		#endregion
 
 		#region Categories
@@ -125,7 +125,7 @@ namespace AudiosearchNet
 		/// <returns>Returns null if the cache file does not exist, else returns the contents of the response in the file identified by the id</returns>
 		private string GetApiResponse(string endpoint)
 		{
-			string response = ReadResponse(EndpointToFileNamePostfix(endpoint));
+			string response = ReadResponse(TempFilenameFromEndpoint(endpoint));
 			if (string.IsNullOrEmpty(response))
 			{
 				response = this.GetJsonResponse(endpoint);
@@ -145,18 +145,17 @@ namespace AudiosearchNet
 		/// <returns></returns>
 		private bool WriteResponse(string endpoint, string response)
 		{
-			DirectoryInfo directoryInfo = GetTempCacheFileName();
-			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + EndpointToFileNamePostfix(endpoint) + ".json";
+			string resultsFile = TempFilenameFromEndpoint(endpoint);
 
-			WriteToFile(response, resultsFile);
+			if (!System.IO.File.Exists(resultsFile))
+				System.IO.File.WriteAllText(resultsFile, response);
 
 			return true;
 		}
 
 		private string ReadResponse(string endpoint)
 		{
-			DirectoryInfo directoryInfo = GetTempCacheFileName();
-			string resultsFile = directoryInfo.FullName + "AudioSearchLogShow_" + EndpointToFileNamePostfix(endpoint) + ".json";
+			string resultsFile = TempFilenameFromEndpoint(endpoint);
 			if (System.IO.File.Exists(resultsFile))
 			{
 				var response = System.IO.File.ReadAllText(resultsFile);
@@ -166,25 +165,12 @@ namespace AudiosearchNet
 			return null;
 		}
 
-		private static void WriteToFile(string response, string filename)
+		private string TempFilenameFromEndpoint(string endpoint)
 		{
-			if (System.IO.File.Exists(filename))
-			{
-				System.IO.File.Delete(filename);
-			}
+			var tempPath = Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
+			var path = tempPath + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_') + ".json";
 
-			System.IO.File.WriteAllText(filename, response);
-		}
-
-		private string EndpointToFileNamePostfix(string endpoint)
-		{
-			return endpoint.Replace('/', '_').Replace('\\', '_');
-		}
-
-		private static DirectoryInfo GetTempCacheFileName()
-		{
-			return Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
-			// Note: This is just temporary until the results are stored in the DB
+			return path;
 		}
 
 		#endregion
