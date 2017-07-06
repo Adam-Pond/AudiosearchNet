@@ -125,7 +125,7 @@ namespace AudiosearchNet
 		/// <returns>Returns null if the cache file does not exist, else returns the contents of the response in the file identified by the id</returns>
 		private string GetApiResponse(string endpoint)
 		{
-			string response = ReadResponse(TempFilenameFromEndpoint(endpoint));
+			string response = ReadResponse(endpoint);
 			if (string.IsNullOrEmpty(response))
 			{
 				response = this.GetJsonResponse(endpoint);
