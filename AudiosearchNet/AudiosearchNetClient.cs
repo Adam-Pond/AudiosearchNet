@@ -19,12 +19,12 @@ namespace AudiosearchNet
 		/// <summary>
 		/// Audiosear.ch Application Id.
 		/// </summary>
-		public string ApplicationId { get; private set; }
+		public string ApplicationId { get; private set; }	// TODO: Shouldn't this be a SecureString?
 
 		/// <summary>
 		/// Audiosear.ch Application Secret.
 		/// </summary>
-		public string ApplicationSecret { get; private set; }
+		public string ApplicationSecret { get; private set; }   // TODO: Shouldn't this be a SecureString.... and private get?
 
 		/// <summary>
 		/// Creates an instance of a client to handles API calls.
@@ -65,7 +65,7 @@ namespace AudiosearchNet
 			return JsonConvert.DeserializeObject<AudiosearchNetApiResult<Show>>(response);
 		}
 
-		public dynamic GetShowById_Dynamic(int id)
+		public dynamic GetDynShowById(int id)
 		{
 			string endpoint = string.Concat(Endpoint.SHOW_BY_ID, id);
 			var response = GetApiResponse(endpoint);
@@ -89,7 +89,7 @@ namespace AudiosearchNet
 
 		#region Categories
 
-		public dynamic GetCategoriesDynamic()
+		public dynamic GetDynCategories()
 		{
 			string response = GetApiResponse(Endpoint.CATEGORIES);
 			dynamic results = JsonConvert.DeserializeObject<dynamic>(response);
@@ -97,7 +97,7 @@ namespace AudiosearchNet
 			return results;
 		}
 
-		public List<Category> GetCategories()
+		public List<Category> GetCategoriesList()
 		{
 			string response = GetApiResponse(Endpoint.CATEGORIES);
 			var results = JsonConvert.DeserializeObject<List<Category>>(response);
@@ -105,7 +105,19 @@ namespace AudiosearchNet
 			return results;
 		}
 
-		public List<AudiosearchNet.Models.EpisodeById> GetEpisodes(List<int> episodeIds)
+		public Dictionary<int, AudiosearchNet.Models.Category> GetCategories()
+		{
+			var categories = GetCategoriesList();
+			var dictionary = new Dictionary<int, Category>();
+			foreach (var category in categories)
+			{
+				dictionary.Add(category.Id, category);
+			}
+
+			return dictionary;
+		}
+
+		public List<AudiosearchNet.Models.EpisodeById> GetEpisodesById(List<int> episodeIds)
 		{
 			var episodes = new List<AudiosearchNet.Models.EpisodeById>();
 
