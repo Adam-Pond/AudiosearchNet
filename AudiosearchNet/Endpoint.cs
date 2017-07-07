@@ -25,6 +25,6 @@
 		/// <summary>
 		/// This endpoint returns the episodes for a given show
 		/// </summary>
-		public static string EPISODES = @"/episodes/";
+		public static string EPISODE_BY_ID = @"/episodes/";
 	}
 }

@@ -153,25 +153,55 @@ namespace AudiosearchNet
 			return dictionary;
 		}
 
+		/// <summary>
+		/// Returns a single episode given an episode id
+		/// </summary>
+		/// <param name="id">Episode Id</param>
+		/// <returns>Details for a single episode</returns>
+		public AudiosearchNet.Models.EpisodeById GetEpisodeById(int id)
+		{
+			string endpoint = string.Concat(Endpoint.EPISODE_BY_ID, id);
+			string response = GetApiResponse(endpoint);
+			var result = JsonConvert.DeserializeObject<EpisodeById>(response);
+			if (result.Audio_files.Count == 0 || String.IsNullOrEmpty(result.Audio_files[0].Url))
+				return null;    // result.Image_files == null || result.Image_files.Count == 0 ||
+
+			return result;
+		}
+
+		/// <summary>
+		/// Return a list of episodes given a list of episode Ids
+		/// </summary>
+		/// <param name="episodeIds">A list of episode ids</param>
+		/// <returns>A collection of episodes</returns>
 		public List<AudiosearchNet.Models.EpisodeById> GetEpisodesById(List<int> episodeIds)
 		{
 			var episodes = new List<AudiosearchNet.Models.EpisodeById>();
 
 			foreach (var id in episodeIds)
 			{
-				string endpoint = string.Concat(Endpoint.EPISODES, id);
-				string response = GetApiResponse(endpoint);
-				episodes.Add(JsonConvert.DeserializeObject<EpisodeById>(response));
+				var episode = GetEpisodeById(id);
+				if (episode != null)
+					episodes.Add(episode);
 			}
 			return episodes;
 		}
 
+		/// <summary>
+		/// Returns a collection of trending shows
+		/// </summary>
+		/// <returns>A collection of trending shows</returns>
 		public List<AudiosearchNet.Models.ShowById> GetTrendingShows()
 		{
 			var trendingShows = GetTrending();
 			return GetTrendingShows(trendingShows);
 		}
 
+		/// <summary>
+		/// Returns a collection of Trending shows given the results of the chart call containing title and id of the trending shows.
+		/// </summary>
+		/// <param name="trendingShows"></param>
+		/// <returns>A collection of trending shows</returns>
 		private List<AudiosearchNet.Models.ShowById> GetTrendingShows(Charts trendingShows)
 		{
 			var shows = new List<AudiosearchNet.Models.ShowById>();
