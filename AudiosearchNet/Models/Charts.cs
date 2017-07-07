@@ -15,6 +15,6 @@ namespace AudiosearchNet.Models
 		[JsonProperty("start_date")]
 		public string Start_date { get; set; }
 		[JsonProperty("shows")]
-		public Dictionary<string, int> Shows { get; set; }
+		public Dictionary<int, string> Shows { get; set; }
 	}
 }

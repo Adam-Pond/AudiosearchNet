@@ -20,7 +20,7 @@ namespace AudiosearchNet
 		/// <summary>
 		/// Audiosear.ch Application Id.
 		/// </summary>
-		public string ApplicationId { get; private set; }	// TODO: Shouldn't this be a SecureString?
+		public string ApplicationId { get; private set; }   // TODO: Shouldn't this be a SecureString?
 
 		/// <summary>
 		/// Audiosear.ch Application Secret.
@@ -93,34 +93,7 @@ namespace AudiosearchNet
 
 			var result = JsonConvert.DeserializeObject<dynamic>(response);
 
-			string country = result.country;
-			string limit = result.limit;
-			string startdate = result.start_date;
-			var shows = result.shows;
-			var trendingShows = new Dictionary<string, int>();
-
-			foreach (var obj in shows)
-			{
-				int id;
-				string title;
-
-				GetTitleAndIdFromMalformedJson(obj.ToString(), out id, out title);
-				trendingShows.Add(title, id);
-			}
-
 			return result;
-		}
-
-		private void GetTitleAndIdFromMalformedJson(string input, out int id, out string title)
-		{
-			string pattern = @"""(?<Title>.+)"": {.*\r\n.*id"": (?<Id>\d+),";
-			Regex regex = new Regex(pattern);
-			Match match = regex.Match(input);
-
-			
-			title =  match.Groups["Title"].Value;
-			string ids = match.Groups["Id"].Value;
-			id = int.Parse(ids);
 		}
 
 		public Charts GetTrending()
@@ -134,7 +107,7 @@ namespace AudiosearchNet
 			charts.Country = result.country;
 			charts.Limit = result.limit;
 			charts.Start_date = result.start_date;
-			charts.Shows = new Dictionary<string, int>();
+			charts.Shows = new Dictionary<int, string>();
 
 			foreach (var obj in result.shows)
 			{
@@ -142,7 +115,7 @@ namespace AudiosearchNet
 				string title;
 
 				GetTitleAndIdFromMalformedJson(obj.ToString(), out id, out title);
-				charts.Shows.Add(title, id);
+				charts.Shows.Add(id, title);
 			}
 
 			return charts;
@@ -193,6 +166,24 @@ namespace AudiosearchNet
 			return episodes;
 		}
 
+		public List<AudiosearchNet.Models.ShowById> GetTrendingShows()
+		{
+			var trendingShows = GetTrending();
+			return GetTrendingShows(trendingShows);
+		}
+
+		private List<AudiosearchNet.Models.ShowById> GetTrendingShows(Charts trendingShows)
+		{
+			var shows = new List<AudiosearchNet.Models.ShowById>();
+
+			foreach (var trendingShow in trendingShows.Shows)
+			{
+				shows.Add(GetShowById(trendingShow.Key));
+			}
+
+			return shows;
+		}
+
 		/// <summary>
 		/// Returns a cached response based on the given ID.
 		/// Cache is in %TEMP%/AudioSearch
@@ -208,6 +199,28 @@ namespace AudiosearchNet
 			}
 
 			return response;
+		}
+
+		#endregion
+
+		#region Helper functions
+
+		/// <summary>
+		/// While dealing with charts, the returned json is malformed. This pulls out the important information about the title and the ID of the show.
+		/// </summary>
+		/// <param name="input">The malformed json</param>
+		/// <param name="id">the returned id.</param>
+		/// <param name="title">the title of the show.</param>
+		private void GetTitleAndIdFromMalformedJson(string input, out int id, out string title)
+		{
+			string pattern = @"""(?<Title>.+)"": {.*\r\n.*id"": (?<Id>\d+),";
+			Regex regex = new Regex(pattern);
+			Match match = regex.Match(input);
+
+
+			title = match.Groups["Title"].Value;
+			string ids = match.Groups["Id"].Value;
+			id = int.Parse(ids);
 		}
 
 		#endregion

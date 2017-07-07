@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace AudiosearchNet.Models
 {
-    public class Episode
-    {
-        [JsonProperty("item_id")]
-        public int Id { get; set; }
+	public class Episode
+	{
+		[JsonProperty("item_id")]
+		public int Id { get; set; }
 
-        [JsonProperty("file_name")]
-        public string Name { get; set; }
+		[JsonProperty("file_name")]
+		public string Name { get; set; }
 
-        [JsonProperty("item_name")]
-        public string ItemName { get; set; }
+		[JsonProperty("item_name")]
+		public string ItemName { get; set; }
 
-        [JsonProperty("file_status")]
-        public string Status { get; set; }
-    }
+		[JsonProperty("file_status")]
+		public string Status { get; set; }
+	}
 
 	/// <summary>
 	/// EpisodeById
@@ -46,7 +46,7 @@ namespace AudiosearchNet.Models
 		[JsonProperty("updated_at")]
 		public string Updated_at { get; set; }
 		[JsonProperty("itunes_episode")]
-		public int? Itunes_episode { get; set; }
+		public string Itunes_episode { get; set; }
 		[JsonProperty("buzz_score")]
 		public double? Buzz_score { get; set; }
 		[JsonProperty("date_added")]
