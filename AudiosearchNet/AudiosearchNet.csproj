@@ -55,6 +55,7 @@
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\ImageFile.cs" />
     <Compile Include="Models\Url.cs" />
+    <Compile Include="Models\Charts.cs" />
     <Compile Include="Models\Urls.cs" />
     <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\Image.cs" />

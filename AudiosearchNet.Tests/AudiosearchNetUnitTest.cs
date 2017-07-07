@@ -74,5 +74,27 @@ namespace AudiosearchNet.Tests
 				Assert.IsNotNull(category.Name);
 			}
 		}
+
+		[TestCategory("Integration"), TestMethod]
+		public void AudiosearchNetClient_GetDynTrending()
+		{
+			var trending = client.GetDynTrending();
+			Assert.IsNotNull(trending);
+			Assert.IsNotNull(trending.country);
+			Assert.IsNotNull(trending.limit);
+			Assert.IsNotNull(trending.start_date);
+			Assert.IsNotNull(trending.shows);
+		}
+
+		[TestCategory("Integration"), TestMethod]
+		public void AudiosearchNetClient_GetTrending()
+		{
+			var trending = client.GetTrending();
+			Assert.IsNotNull(trending);
+			Assert.IsNotNull(trending.Country);
+			Assert.IsNotNull(trending.Limit);
+			Assert.IsNotNull(trending.Start_date);
+			Assert.IsTrue(trending.Shows.Count > 0);
+		}
 	}
 }

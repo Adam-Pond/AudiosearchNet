@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace AudiosearchNet
 {
@@ -83,6 +84,68 @@ namespace AudiosearchNet
 			var result = JsonConvert.DeserializeObject<ShowById>(response);
 
 			return result;
+		}
+
+		public dynamic GetDynTrending()
+		{
+			string endpoint = string.Concat(Endpoint.TRENDING_SHOW);
+			var response = GetApiResponse(endpoint);
+
+			var result = JsonConvert.DeserializeObject<dynamic>(response);
+
+			string country = result.country;
+			string limit = result.limit;
+			string startdate = result.start_date;
+			var shows = result.shows;
+			var trendingShows = new Dictionary<string, int>();
+
+			foreach (var obj in shows)
+			{
+				int id;
+				string title;
+
+				GetTitleAndIdFromMalformedJson(obj.ToString(), out id, out title);
+				trendingShows.Add(title, id);
+			}
+
+			return result;
+		}
+
+		private void GetTitleAndIdFromMalformedJson(string input, out int id, out string title)
+		{
+			string pattern = @"""(?<Title>.+)"": {.*\r\n.*id"": (?<Id>\d+),";
+			Regex regex = new Regex(pattern);
+			Match match = regex.Match(input);
+
+			
+			title =  match.Groups["Title"].Value;
+			string ids = match.Groups["Id"].Value;
+			id = int.Parse(ids);
+		}
+
+		public Charts GetTrending()
+		{
+			string endpoint = string.Concat(Endpoint.TRENDING_SHOW);
+			var response = GetApiResponse(endpoint);
+
+			var result = JsonConvert.DeserializeObject<dynamic>(response);
+
+			var charts = new Charts();
+			charts.Country = result.country;
+			charts.Limit = result.limit;
+			charts.Start_date = result.start_date;
+			charts.Shows = new Dictionary<string, int>();
+
+			foreach (var obj in result.shows)
+			{
+				int id;
+				string title;
+
+				GetTitleAndIdFromMalformedJson(obj.ToString(), out id, out title);
+				charts.Shows.Add(title, id);
+			}
+
+			return charts;
 		}
 
 		#endregion
@@ -180,7 +243,7 @@ namespace AudiosearchNet
 		private string TempFilenameFromEndpoint(string endpoint)
 		{
 			var tempPath = Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
-			var path = tempPath.FullName + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_') + ".json";
+			var path = tempPath.FullName + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_').Replace('?', '.') + ".json";
 
 			return path;
 		}
