@@ -170,19 +170,19 @@ namespace AudiosearchNet
 		}
 
 		/// <summary>
-		/// Return a list of episodes given a list of episode Ids
+		/// Return a collection of episodes given a list of episode Ids
 		/// </summary>
 		/// <param name="episodeIds">A list of episode ids</param>
 		/// <returns>A collection of episodes</returns>
-		public List<AudiosearchNet.Models.EpisodeById> GetEpisodesById(List<int> episodeIds)
+		public Dictionary<int, AudiosearchNet.Models.EpisodeById> GetEpisodesById(List<int> episodeIds)
 		{
-			var episodes = new List<AudiosearchNet.Models.EpisodeById>();
+			var episodes = new Dictionary<int, AudiosearchNet.Models.EpisodeById>();
 
 			foreach (var id in episodeIds)
 			{
 				var episode = GetEpisodeById(id);
 				if (episode != null)
-					episodes.Add(episode);
+					episodes.Add(episode.Id, episode);
 			}
 			return episodes;
 		}
