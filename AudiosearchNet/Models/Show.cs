@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace AudiosearchNet.Models
 {
@@ -9,28 +10,33 @@ namespace AudiosearchNet.Models
         public int Id { get; set; }
 
         [JsonProperty("title")]
-        public string Title { get; set; }
+		[Display(Name = "Title")]
+		public string Title { get; set; }
 
         [JsonProperty("network")]
         public Network Network { get; set; }
 
         [JsonProperty("categories")]
-        public List<Category> Categories { get; set; }
+		[Display(Name = "Categories")]
+		public List<Category> Categories { get; set; }
 
         [JsonProperty("description")]
-        public string Description { get; set; }
+		[Display(Name = "Description")]
+		public string Description { get; set; }
 
         [JsonProperty("ui_url")]
-        public string AudiosearchUrl { get; set; }
+		public string AudiosearchUrl { get; set; }
 
         [JsonProperty("rss_url")]
         public string RssUrl { get; set; }
 
         [JsonProperty("buzz_score")]
-        public string Score { get; set; }
+		[Display(Name = "Buzz Score")]
+		public string Score { get; set; }
 
         [JsonProperty("image_files")]
-        public List<Image> Images { get; set; }
+		[Display(Name = "Image")]
+		public List<Image> Images { get; set; }
 
         [JsonProperty("sc_feed")]
         public string Feed { get; set; }
@@ -39,7 +45,8 @@ namespace AudiosearchNet.Models
         public List<object> Profiles { get; set; }
 
         [JsonProperty("episode_ids")]
-        public List<int> EpisodeIds { get; set; }
+		[Display(Name = "Episodes")]
+		public List<int> EpisodeIds { get; set; }
 
         [JsonProperty("urls")]
         public object Urls { get; set; }

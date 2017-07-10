@@ -164,7 +164,7 @@ namespace AudiosearchNet
 			string response = GetApiResponse(endpoint);
 			var result = JsonConvert.DeserializeObject<EpisodeById>(response);
 			if (result.Audio_files.Count == 0 || String.IsNullOrEmpty(result.Audio_files[0].Url))
-				return null;    // result.Image_files == null || result.Image_files.Count == 0 ||
+				return null;
 
 			return result;
 		}
@@ -286,7 +286,7 @@ namespace AudiosearchNet
 		private string TempFilenameFromEndpoint(string endpoint)
 		{
 			var tempPath = Directory.CreateDirectory(Path.GetTempPath() + @"\Audiosear.ch\");
-			var path = tempPath.FullName + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_').Replace('?', '.') + ".json";
+			var path = tempPath.FullName + "AudioSearchLogShow_" + endpoint.Replace('/', '_').Replace('\\', '_').Replace('?', '.').Replace('"', '`') + ".json";
 
 			return path;
 		}
